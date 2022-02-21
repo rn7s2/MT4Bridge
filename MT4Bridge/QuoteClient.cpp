@@ -133,7 +133,7 @@ std::vector<Order> MT4Bridge::QuoteClient::GetOpenedOrders()
 
 EventArgs::QuoteEventArgs MT4Bridge::QuoteClient::GetQuote(const std::string& symbol)
 {
-    return Util::convert(qc->GetQuote(Util::convert(symbol)));
+    return Util::convert(qc->GetQuote(Util::convert(symbol), 1000));
 }
 
 SymbolInfo QuoteClient::GetSymbolInfo(const std::string& symbol)

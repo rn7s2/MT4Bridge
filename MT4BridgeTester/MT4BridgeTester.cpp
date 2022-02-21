@@ -29,7 +29,7 @@ public:
         MT4Bridge::Server srv(MT4Bridge::QuoteClient::LoadSrv(file));
 
         // 建立报价客户端对象
-        qc = new MT4Bridge::QuoteClient(username, password, srv.host, srv.port);
+        qc = new MT4Bridge::QuoteClient(0, "", srv.host, srv.port);
 
         // 这几个参数作用请看文档
         qc->AutoReconnect = true;
@@ -112,8 +112,7 @@ public:
         }
     }
 
-    // 直接法 获取实时报价，MT4 API工作不正常，弃用
-    // 接口保留，以备升级
+    // 直接法 获取实时报价
     void GetQuote()
     {
         for (int i = 0; i < 60; i++) {
@@ -196,7 +195,7 @@ int main()
     //demos.DownloadOrderHistory();
     //demos.GetOpenedOrders();
     //demos.DownloadQuoteHistory();
-    //demos.GetQuote();
+    demos.GetQuote();
     //demos.RealTimeQuotes();
     //demos.GetSymbolInfo();
     //demos.PingHost();

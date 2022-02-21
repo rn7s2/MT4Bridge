@@ -5,7 +5,7 @@
 using namespace TradingAPI;
 using namespace MT4Bridge;
 
-OrderClient::OrderClient(const QuoteClient& qc)
+OrderClient::OrderClient(QuoteClient& qc)
 {
     oc = gcnew MT4Server::OrderClient(qc.qc);
 }
@@ -79,4 +79,31 @@ void OrderClient::OrderModify(
 void OrderClient::OrderMultipleCloseBy(const std::string& symbol)
 {
     oc->OrderMultipleCloseBy(Util::convert(symbol));
+}
+
+Order MT4Bridge::OrderClient::OrderSend(
+    const std::string& symbol,
+    Op operation,
+    double volume,
+    double price,
+    int slippage,
+    double stoploss,
+    double takeprofit,
+    const std::string& comment,
+    int magic,
+    DateTime expiration
+)
+{
+    return Util::convert(oc->OrderSend(
+        Util::convert(symbol),
+        Util::convert(operation),
+        volume,
+        price,
+        slippage,
+        stoploss,
+        takeprofit,
+        Util::convert(comment),
+        magic,
+        Util::convert(expiration)
+    ));
 }

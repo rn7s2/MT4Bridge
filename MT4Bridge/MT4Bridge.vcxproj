@@ -195,7 +195,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MT4ServerApi">
-      <HintPath>..\..\..\Documents\MT4ServerAPI.dll</HintPath>
+      <HintPath>..\..\MT4ServerAPI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
