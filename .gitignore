@@ -30,6 +30,7 @@ mono_crash.*
 [Rr]elease/*.exe
 [Rr]elease/MT4ServerApi.dll
 [Rr]eleases/
+Release/libmt4bridge.so
 MT4Bridge/Release/
 MT4BridgeTester/Release/
 x64/
