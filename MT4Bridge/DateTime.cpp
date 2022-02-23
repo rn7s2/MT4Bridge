@@ -58,3 +58,22 @@ DateTime MT4Bridge::DateTime::Now()
 {
     return Util::convert(System::DateTime::Now);
 }
+
+bool MT4Bridge::DateTime::operator<(const DateTime& b) const
+{
+    if (datetime->CompareTo(b.datetime) < 0)
+        return true;
+    return false;
+}
+
+bool MT4Bridge::DateTime::operator>(const DateTime& b) const
+{
+    if (datetime->CompareTo(b.datetime) > 0)
+        return true;
+    return false;
+}
+
+bool MT4Bridge::DateTime::operator==(const DateTime& b) const
+{
+    return datetime->Equals(b.datetime);
+}

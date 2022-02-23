@@ -21,8 +21,11 @@ namespace MT4Bridge
         int second();
         std::string format();
         static DateTime Now();
+        bool operator < (const DateTime& b) const;
+        bool operator > (const DateTime& b) const;
+        bool operator == (const DateTime& b) const;
 
-    private:
+    public:
 #ifdef _MANAGED
         gcroot<System::DateTime^> datetime;
 #else
