@@ -65,6 +65,7 @@ namespace MT4Bridge
         std::vector<std::string> Symbols();
         void Subscribe(const std::string& symbol);
         void Unsubscribe(const std::string& symbol);
+        bool IsSubscribed(const std::string& symbol);
 
     public:
         bool AutoReconnect;

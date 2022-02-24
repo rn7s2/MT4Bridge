@@ -1,18 +1,31 @@
 #include "pch.h"
 #include "Util.h"
 #include "QuoteClient.h"
+#include <mutex>
 
 using namespace TradingAPI;
 using namespace MT4Bridge;
 
 namespace EventArgs
 {
-    extern DLL_EXPORT std::vector<QuoteEventArgs> quote_events;
+    extern DLL_EXPORT std::atomic<bool> hasNewQuote;
+    extern DLL_EXPORT std::atomic<bool> hasOrderUpdate;
+}
+
+void OnOnQuote(System::Object^ sender, TradingAPI::MT4Server::QuoteEventArgs^ args)
+{
+    EventArgs::hasNewQuote = true;
+}
+
+void OnOnOrderUpdate(System::Object^ sender, TradingAPI::MT4Server::OrderUpdateEventArgs args)
+{
+    System::Console::WriteLine("Order update: " + args.Order->Ticket + " " + (int)args.Action);
+    EventArgs::hasOrderUpdate = true;
 }
 
 QuoteClient::QuoteClient()
 {
-    qc = gcnew MT4Server::QuoteClient();
+    qc = gcnew MT4Server::QuoteClient();    
 }
 
 QuoteClient::QuoteClient(
@@ -72,12 +85,14 @@ void QuoteClient::Connect()
     } catch (System::Exception^ e) {
         System::Console::WriteLine(e->ToString());
     }
-    System::Console::WriteLine("Connection established, server build: " + qc->ServerBuild);
+    System::Console::Write("Connection established, server build: " + qc->ServerBuild);
 
-    //服务器时间API工作不正常
-    //while (qc->ServerTime == System::DateTime::MinValue)
-    //	System::Threading::Thread::Sleep(10);
-    //System::Console::WriteLine("，服务器时间" + qc->ServerTime.ToString("yyyy-MM-dd HH:mm:ss"));
+    EventArgs::hasOrderUpdate = true;
+    qc->OnOrderUpdate += gcnew TradingAPI::MT4Server::OrderUpdateEventHandler(&OnOnOrderUpdate);
+
+    while (qc->ServerTime == System::DateTime::MinValue)
+    	System::Threading::Thread::Sleep(10);
+    System::Console::WriteLine(", server time: " + qc->ServerTime.ToString("yyyy-MM-dd HH:mm:ss"));
 }
 
 void QuoteClient::Disconnect()
@@ -230,16 +245,6 @@ std::vector<std::string> MT4Bridge::QuoteClient::Symbols()
     return ret;
 }
 
-void OnOnQuote(System::Object^ sender, TradingAPI::MT4Server::QuoteEventArgs^ args)
-{
-    EventArgs::quote_events.push_back({
-        Util::convert(args->Symbol),
-        args->Ask,
-        args->Bid,
-        Util::convert(args->Time)
-    });
-}
-
 void QuoteClient::Subscribe(const std::string& symbol)
 {
     qc->OnQuote += gcnew TradingAPI::MT4Server::QuoteEventHandler(&OnOnQuote);
@@ -249,4 +254,9 @@ void QuoteClient::Subscribe(const std::string& symbol)
 void MT4Bridge::QuoteClient::Unsubscribe(const std::string& symbol)
 {
     qc->Unsubscribe(Util::convert(symbol));
+}
+
+bool MT4Bridge::QuoteClient::IsSubscribed(const std::string& symbol)
+{
+    return qc->IsSubscribed(Util::convert(symbol));
 }

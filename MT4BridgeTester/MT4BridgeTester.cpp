@@ -14,7 +14,8 @@
 
 namespace EventArgs
 {
-    DLL_EXPORT std::vector<EventArgs::QuoteEventArgs> quote_events;
+    extern DLL_EXPORT std::atomic<bool> hasNewQuote;
+    extern DLL_EXPORT std::atomic<bool> hasOrderUpdate;
 }
 
 // 这个类的成员函数是各种示例
@@ -122,29 +123,6 @@ public:
             DUMP(quote.ask);
             DUMP(quote.bid);
             Sleep(2000);
-        }
-    }
-
-    // 间接法 获取实时报价
-    void RealTimeQuotes()
-    {
-        // 清空接收最新报价的vector
-        int last_size = 0;
-        EventArgs::quote_events.clear();
-
-        // 订阅报价推送
-        qc->Subscribe("EURUSD");
-        while (true) {
-            if (last_size != EventArgs::quote_events.size()) {
-                for (int i = last_size; i < EventArgs::quote_events.size(); i++) {
-                    DUMP(EventArgs::quote_events[i].time.format());
-                    DUMP(EventArgs::quote_events[i].symbol);
-                    DUMP(EventArgs::quote_events[i].ask);
-                    DUMP(EventArgs::quote_events[i].bid);
-                }
-                last_size = EventArgs::quote_events.size();
-            }
-            Sleep(100);
         }
     }
 
